@@ -12,21 +12,31 @@
             --bg: #ffffff;
             --on-bg: #000000;
             --surface: #f7f7f7;
+            --surface-accent: #eeeeee;
             --surface-border: #e0e0e0;
             --outline: #888888;
             --dock-bg: rgba(255, 255, 255, 0.8);
             --window-shadow: 0 10px 30px rgba(0,0,0,0.08);
             --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Light Theme Custom Cursors */
+            --cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M0 0l6 11 1.5-3.5 3.5-1.5z' fill='%23000000'/%3E%3C/svg%3E") 0 0, auto;
+            --cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4' fill='none' stroke='%23000000' stroke-width='2'/%3E%3C/svg%3E") 8 8, pointer;
         }
 
         [data-theme="dark"] {
             --bg: #000000;
             --on-bg: #ffffff;
             --surface: #111111;
+            --surface-accent: #1c1c1c;
             --surface-border: #222222;
             --outline: #666666;
             --dock-bg: rgba(17, 17, 17, 0.8);
             --window-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            
+            /* Dark Theme Custom Cursors */
+            --cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M0 0l6 11 1.5-3.5 3.5-1.5z' fill='%23ffffff'/%3E%3C/svg%3E") 0 0, auto;
+            --cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='4' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E") 8 8, pointer;
         }
 
         * { box-sizing: border-box; }
@@ -41,6 +51,12 @@
             overflow: hidden;
             position: relative;
             transition: background-color var(--transition), color var(--transition);
+            cursor: var(--cursor-default);
+        }
+
+        /* Interactive Elements Pointer Override */
+        a, button, input, .dock-item, .win-btn, .menubar-home, .menubar-left div, .window-titlebar, .logo-text {
+            cursor: var(--cursor-pointer);
         }
 
         /* Subtle Grid Wallpaper */
@@ -72,9 +88,20 @@
             font-size: 0.8rem;
             font-weight: 500;
             z-index: 9999;
+            user-select: none;
         }
 
         .menubar-left { display: flex; gap: 20px; align-items: center; }
+        
+        .menubar-home {
+            display: flex;
+            align-items: center;
+        }
+        .menubar-home span {
+            font-size: 1.1rem;
+            color: var(--on-bg);
+        }
+
         .menubar-brand { font-weight: 700; letter-spacing: -0.02em; }
         .menubar-right { font-family: monospace; color: var(--outline); display: flex; gap: 15px; align-items: center; }
         .menubar-right span { color: var(--on-bg); font-weight: 700; }
@@ -92,8 +119,8 @@
             flex-direction: column;
             overflow: hidden;
             z-index: 10;
-            min-width: 300px;
-            min-height: 200px;
+            min-width: 320px;
+            min-height: 220px;
             transform: scale(0.95);
             opacity: 0;
             pointer-events: none;
@@ -113,7 +140,6 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--surface-border);
-            cursor: move;
             user-select: none;
         }
 
@@ -123,7 +149,6 @@
             height: 12px;
             border-radius: 50%;
             border: 1px solid var(--outline);
-            cursor: pointer;
             background: transparent;
             transition: background 0.2s;
         }
@@ -144,6 +169,7 @@
             overflow-y: auto;
             font-size: 0.9rem;
             line-height: 1.5;
+            position: relative;
         }
 
         .window-content iframe {
@@ -153,7 +179,227 @@
             filter: grayscale(1);
         }
 
-        /* macOS-Style Floating Dock */
+        /* Native Resizing Handle */
+        .window-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            cursor: se-resize;
+            z-index: 999;
+            background: linear-gradient(135deg, transparent 8px, var(--outline) 8px, transparent 10px, var(--outline) 10px, transparent 12px, var(--outline) 12px);
+            opacity: 0.4;
+            transition: opacity 0.2s;
+        }
+        .window-resize-handle:hover {
+            opacity: 1;
+        }
+
+        /* ==========================================================================
+           INTEGRATED CHROMIUM / URANIUM SEARCH ARCHITECTURE
+           ========================================================================== */
+        
+        .browser-nav-bar {
+            background: var(--surface);
+            height: 42px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 12px;
+            border-bottom: 1px solid var(--surface-border);
+            user-select: none;
+        }
+
+        .browser-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .browser-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--outline);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color var(--transition);
+        }
+
+        .browser-action-btn:hover { color: var(--on-bg); }
+        .browser-action-btn span { font-size: 1.1rem; }
+
+        .browser-address-bar {
+            flex: 1;
+            background: var(--surface-accent);
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--outline);
+            gap: 6px;
+        }
+
+        .browser-address-bar span.lock-icon { font-size: 0.9rem; }
+        .browser-address-text { color: var(--on-bg); opacity: 0.75; font-family: monospace; }
+
+        /* Search Layout Interior */
+        .search-landing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-bottom: 40px;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .logo-text {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            margin: 0;
+            background: linear-gradient(180deg, var(--on-bg) 0%, var(--outline) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-sub {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: var(--outline);
+            margin-top: 2px;
+            display: block;
+            margin-left: 0.4em;
+        }
+
+        .search-box-wrapper {
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .search-input-container {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 10px;
+            transition: border-color var(--transition);
+        }
+
+        .search-input-container:focus-within {
+            border-color: var(--outline);
+        }
+
+        .search-input-container span {
+            color: var(--outline);
+            font-size: 1.1rem;
+        }
+
+        .main-search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--on-bg);
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .search-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+
+        .search-btn {
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            color: var(--on-bg);
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all var(--transition);
+        }
+
+        .search-btn:hover {
+            border-color: var(--outline);
+            background: var(--surface-accent);
+        }
+
+        /* Results View */
+        .search-results-page {
+            display: none;
+            padding: 10px 5%;
+        }
+
+        .results-header-inline {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid var(--surface-border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .results-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--on-bg);
+        }
+
+        .results-search-container {
+            flex: 1;
+        }
+
+        .results-stats {
+            font-size: 0.7rem;
+            color: var(--outline);
+            margin-bottom: 16px;
+        }
+
+        .results-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .result-site { font-size: 0.7rem; color: var(--outline); }
+        .result-title { font-size: 0.95rem; color: var(--on-bg); text-decoration: none; font-weight: 500; }
+        .result-title:hover { text-decoration: underline; }
+        .result-snippet { font-size: 0.8rem; color: var(--outline); line-height: 1.4; }
+
+        /* ==========================================================================
+           DOCK CONFIGURATION
+           ========================================================================== */
+
         .dock-container {
             position: absolute;
             bottom: 20px;
@@ -174,17 +420,15 @@
             gap: 12px;
         }
 
-        /* Custom Grayscale App Icons with Rounded Corners */
         .dock-item {
             width: 48px;
             height: 48px;
             background: var(--surface);
             border: 1px solid var(--surface-border);
-            border-radius: 12px; /* Smooth rounded squircle corners */
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             position: relative;
             transition: transform var(--transition), background var(--transition);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.05);
@@ -198,14 +442,12 @@
             transition: filter var(--transition);
         }
 
-        /* macOS Dock Scaling Effect */
         .dock-item:hover {
             transform: translateY(-8px) scale(1.15);
             background: var(--bg);
             border-color: var(--outline);
         }
 
-        /* Active App Dot Indicators */
         .dock-item::after {
             content: '';
             position: absolute;
@@ -221,7 +463,6 @@
         }
         .dock-item.running::after { opacity: 1; }
 
-        /* Theme Toggle Custom placement */
         .theme-btn { background: var(--on-bg); border-color: var(--on-bg); }
         .theme-btn span { color: var(--bg); filter: none; }
         .theme-btn:hover { background: var(--on-bg); opacity: 0.8; }
@@ -231,6 +472,9 @@
 
     <div class="menubar">
         <div class="menubar-left">
+            <div class="menubar-home" title="System Menu">
+                <span class="material-symbols-rounded">home</span>
+            </div>
             <div class="menubar-brand">UraniumOS</div>
             <div>File</div>
             <div>Edit</div>
@@ -244,7 +488,7 @@
 
     <div class="desktop" id="desktop">
 
-        <div class="window" id="win-info" style="top: 10%; left: 15%;">
+        <div class="window" id="win-info" style="top: 10%; left: 12%;">
             <div class="window-titlebar">
                 <div class="window-controls">
                     <button class="win-btn close" onclick="toggleWindow('info')"></button>
@@ -259,9 +503,10 @@
                 <hr style="border: 0; border-top: 1px solid var(--surface-border); margin: 20px 0;">
                 <p>Status: <span style="color: #27c93f;">Online</span><br>Memory: Nominal<br>Environment: Pure Monochrome</p>
             </div>
+            <div class="window-resize-handle"></div>
         </div>
 
-        <div class="window" id="win-lab" style="top: 20%; left: 30%; width: 500px; height: 350px;">
+        <div class="window" id="win-lab" style="top: 22%; left: 34%; width: 500px; height: 350px;">
             <div class="window-titlebar">
                 <div class="window-controls">
                     <button class="win-btn close" onclick="toggleWindow('lab')"></button>
@@ -273,20 +518,68 @@
             <div class="window-content" style="padding: 0;">
                 <iframe src="https://musiclab.chromeexperiments.com/Song-Maker/embed/6165359731802112"></iframe>
             </div>
+            <div class="window-resize-handle"></div>
         </div>
 
-        <div class="window" id="win-google" style="top: 15%; left: 25%; width: 550px; height: 400px;">
+        <div class="window" id="win-search" style="top: 14%; left: 22%; width: 580px; height: 420px;">
             <div class="window-titlebar">
                 <div class="window-controls">
-                    <button class="win-btn close" onclick="toggleWindow('google')"></button>
+                    <button class="win-btn close" onclick="toggleWindow('search')"></button>
                     <button class="win-btn max"></button>
                 </div>
-                <div class="window-title">Google Search</div>
+                <div class="window-title" id="browserWindowTitle">Uranium Browser</div>
                 <div style="width: 32px;"></div>
             </div>
-            <div class="window-content" style="padding: 0;">
-                <iframe src="https://www.google.com/webhp?igu=1"></iframe>
+            
+            <div class="browser-nav-bar">
+                <div class="browser-actions">
+                    <button class="browser-action-btn" onclick="goBackHome()" title="Back">
+                        <span class="material-symbols-rounded">arrow_back</span>
+                    </button>
+                    <button class="browser-action-btn" title="Refresh">
+                        <span class="material-symbols-rounded">refresh</span>
+                    </button>
+                </div>
+                <div class="browser-address-bar">
+                    <span class="material-symbols-rounded lock-icon">lock</span>
+                    <div class="browser-address-text" id="browserAddressText">uranium://search</div>
+                </div>
             </div>
+
+            <div class="window-content" style="padding: 0; display: flex; flex-direction: column;">
+                
+                <div class="search-landing" id="searchLanding">
+                    <div class="logo-container">
+                        <h1 class="logo-text" onclick="goBackHome()">Uranium</h1>
+                        <span class="logo-sub">Search Engine</span>
+                    </div>
+                    <div class="search-box-wrapper">
+                        <div class="search-input-container">
+                            <span class="material-symbols-rounded">search</span>
+                            <input type="text" class="main-search-input" id="searchInput" placeholder="Search workspace nodes...">
+                        </div>
+                        <div class="search-buttons">
+                            <button class="search-btn" onclick="executeSystemSearch()">Uranium Search</button>
+                            <button class="search-btn" onclick="executeSystemSearch()">Feel Minimal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-results-page" id="searchResultsPage">
+                    <div class="results-header-inline">
+                        <a href="#" class="results-logo" onclick="goBackHome()">Uranium</a>
+                        <div class="results-search-container">
+                            <div class="search-input-container" style="height: 32px;">
+                                <input type="text" class="main-search-input" id="resultsSearchInput">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="results-stats">About 3 nodes found (0.02 seconds)</div>
+                    <div class="results-feed" id="resultsFeed"></div>
+                </div>
+
+            </div>
+            <div class="window-resize-handle"></div>
         </div>
 
     </div>
@@ -299,7 +592,7 @@
             <div class="dock-item" id="dock-lab" onclick="toggleWindow('lab')" title="Experimental Lab">
                 <span class="material-symbols-rounded">science</span>
             </div>
-            <div class="dock-item" id="dock-google" onclick="toggleWindow('google')" title="Google Search">
+            <div class="dock-item" id="dock-search" onclick="toggleWindow('search')" title="Uranium Search">
                 <span class="material-symbols-rounded">search</span>
             </div>
             <a href="mailto:jordanwuz.tkn@gmail.com" class="dock-item" title="Mail Developer" style="text-decoration: none;">
@@ -342,58 +635,137 @@
             
             if (win.classList.contains('active')) {
                 win.classList.remove('active');
-                dockItem.classList.remove('running');
+                if(dockItem) dockItem.classList.remove('running');
             } else {
                 highestZ++;
                 win.style.zIndex = highestZ;
                 win.classList.add('active');
-                dockItem.classList.add('running');
+                if(dockItem) dockItem.classList.add('running');
             }
         }
 
-        // Draggable Window Mechanics
+        // Draggable and Resizable Window Mechanics
         const windows = document.querySelectorAll('.window');
         windows.forEach(win => {
             const titlebar = win.querySelector('.window-titlebar');
+            const resizeHandle = win.querySelector('.window-resize-handle');
             let isDragging = false;
-            let currentX, currentY, initialX, initialY;
+            let isResizing = false;
+            let initialX, initialY, initialWidth, initialHeight;
 
-            titlebar.addEventListener('mousedown', dragStart);
             win.addEventListener('mousedown', () => {
                 highestZ++;
                 win.style.zIndex = highestZ;
             });
 
-            function dragStart(e) {
+            // Drag Functionality
+            titlebar.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('win-btn')) return;
+                isDragging = true;
                 initialX = e.clientX - win.offsetLeft;
                 initialY = e.clientY - win.offsetTop;
-                isDragging = true;
                 document.addEventListener('mousemove', drag);
-                document.addEventListener('mouseup', dragEnd);
-            }
+                document.addEventListener('mouseup', endWindowAction);
+            });
 
             function drag(e) {
-                if (isDragging) {
-                    e.preventDefault();
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-                    
-                    if(currentY < 35) currentY = 35;
-                    
-                    win.style.left = currentX + "px";
-                    win.style.top = currentY + "px";
-                }
+                if (!isDragging) return;
+                e.preventDefault();
+                let currentX = e.clientX - initialX;
+                let currentY = e.clientY - initialY;
+                if(currentY < 35) currentY = 35;
+                win.style.left = currentX + "px";
+                win.style.top = currentY + "px";
             }
 
-            function dragEnd() {
+            // Resize Functionality
+            resizeHandle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isResizing = true;
+                initialX = e.clientX;
+                initialY = e.clientY;
+                initialWidth = win.offsetWidth;
+                initialHeight = win.offsetHeight;
+                document.addEventListener('mousemove', resize);
+                document.addEventListener('mouseup', endWindowAction);
+            });
+
+            function resize(e) {
+                if (!isResizing) return;
+                const newWidth = initialWidth + (e.clientX - initialX);
+                const newHeight = initialHeight + (e.clientY - initialY);
+                win.style.width = Math.max(newWidth, 320) + 'px';
+                win.style.height = Math.max(newHeight, 220) + 'px';
+            }
+
+            function endWindowAction() {
                 isDragging = false;
+                isResizing = false;
                 document.removeEventListener('mousemove', drag);
-                document.removeEventListener('mouseup', dragEnd);
+                document.removeEventListener('mousemove', resize);
             }
         });
 
-        // Initialize App Windows as visible initially
-        toggleWindow('info');
+        // ==========================================================================
+        // URANIUM INTERACTIVE SEARCH LOGIC ENGINE
+        // ==========================================================================
+        const searchInput = document.getElementById('searchInput');
+        const resultsSearchInput = document.getElementById('resultsSearchInput');
+        const searchLanding = document.getElementById('searchLanding');
+        const searchResultsPage = document.getElementById('searchResultsPage');
+        const resultsFeed = document.getElementById('resultsFeed');
+        const browserAddressText = document.getElementById('browserAddressText');
+        const browserWindowTitle = document.getElementById('browserWindowTitle');
+
+        searchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') executeSystemSearch(); });
+        resultsSearchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') executeSystemSearch(true); });
+
+        function executeSystemSearch(fromResults = false) {
+            const query = fromResults ? resultsSearchInput.value : searchInput.value;
+            if(!query.trim()) return;
+
+            searchInput.value = query;
+            resultsSearchInput.value = query;
+
+            // Shift App Display States
+            browserAddressText.textContent = `uranium://search?q=${encodeURIComponent(query)}`;
+            browserWindowTitle.textContent = `${query} - Uranium Search`;
+            searchLanding.style.display = 'none';
+            searchResultsPage.style.display = 'block';
+
+            // Generate clean workspace nodes inside interface layout
+            resultsFeed.innerHTML = `
+                <div class="result-item">
+                    <span class="result-site">uranium://nodes/workspace</span>
+                    <a href="https://github.com/jordanwuztaken" target="_blank" class="result-title">System Core Node Layer Repository</a>
+                    <span class="result-snippet">Explore primary index configurations, customized monochrome layout definitions, and responsive client architectures.</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-site">uranium://nodes/design-system</span>
+                    <a href="#" class="result-title">Pure Monochrome Variables Framework</a>
+                    <span class="result-snippet">Documentation on executing strict high-contrast UI frameworks completely without aesthetic overhead or bloat variables.</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-site">uranium://nodes/sandbox-labs</span>
+                    <a href="#" class="result-title">Experimental UI Sandbox Tools</a>
+                    <span class="result-snippet">Active environments dealing with drag-and-drop coordinate scaling mechanisms and client layout viewports.</span>
+                </div>
+            `;
+        }
+
+        function goBackHome() {
+            browserAddressText.textContent = "uranium://search";
+            browserWindowTitle.textContent = "Uranium Browser";
+            searchLanding.style.display = 'flex';
+            searchResultsPage.style.display = 'none';
+            searchInput.value = '';
+            resultsSearchInput.value = '';
+            searchInput.focus();
+        }
+
+        // Initialize view states initially
+        toggleWindow('search');
     </script>
 </body>
-</html>
+</html></html>
